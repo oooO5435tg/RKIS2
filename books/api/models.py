@@ -39,15 +39,31 @@ class Cover(models.Model):
         verbose_name = 'Изображение'
         verbose_name_plural = 'Изображения'
 
+class Genre(models.Model):
+    nameGenre = models.CharField(max_length=100, verbose_name='Название жанра', blank=True)
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+    def __str__(self):
+        return self.nameGenre
+
+class Category(models.Model):
+    nameCategory = models.CharField(max_length=100, verbose_name='Название категории', blank=True)
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
+    def __str__(self):
+        return self.nameCategory
 
 class Book(models.Model):
     objects = None
     title = models.CharField(max_length=100, verbose_name='Название книги', blank=False, unique=False)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, max_length=100, verbose_name='Автор', blank=False)
-    yearOfRel = models.IntegerField(verbose_name='Год выпуска', blank=False,
-                                    validators=[MinValueValidator(1000), MaxValueValidator(9999)])
-    genre = models.CharField(max_length=100, verbose_name='Жанр', blank=True)
-    category = models.CharField(max_length=100, verbose_name='Категория', blank=True)
+    yearOfRel = models.IntegerField(verbose_name='Год выпуска', blank=False, validators=[MinValueValidator(1000), MaxValueValidator(9999)])
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, max_length=100, verbose_name='Жанр', blank=False)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, max_length=100, verbose_name='Категория', blank=False)
     publisher = models.CharField(max_length=100, verbose_name='Издательство', blank=True)
 
     def validate_image(value):
