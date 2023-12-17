@@ -32,18 +32,31 @@ class BookCreateView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
+            if self.is_duplicate_book(request.data):
+                return Response({'error': 'Дублирующая книга'}, status=status.HTTP_400_BAD_REQUEST)
         except ValidationError as e:
-            if (Book.objects.get(title=request.data['title']).publisher != request.data['publisher'] and request.data[
-                'genre'] == 'художественное произведение, переведенное с другого языка'):
-                serializer.is_valid()
-            if (Book.objects.get(title=request.data['title']).yearofRel != request.data['yearOfRel'] and request.data[
-                'genre'] == 'учебник'):
-                serializer.is_valid()
-            else:
-                raise ValidationError(self.errors)
+            raise ValidationError(e)
+
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def is_duplicate_book(self, data):
+        title = data.get('title')
+        author = data.get('author')
+        genre = data.get('genre')
+
+        existing_books = Book.objects.filter(title=title, author=author, genre=genre)
+
+        if genre == 'художественное произведение, переведенное с другого языка':
+            publisher = data.get('publisher')
+            existing_books = existing_books.filter(publisher=publisher)
+
+        if genre == 'учебник':
+            year_of_release = data.get('yearOfRel')
+            existing_books = existing_books.filter(yearOfRel=year_of_release)
+
+        return existing_books.exists()
 
 
 class AuthorCreateView(generics.CreateAPIView):

@@ -136,3 +136,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'api')
 MEDIA_URL = '/api-library/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

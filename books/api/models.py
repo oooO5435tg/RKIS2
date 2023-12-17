@@ -13,8 +13,8 @@ from django.utils.datetime_safe import datetime
 class Author(models.Model):
     objects = None
     name = models.CharField(max_length=100, verbose_name='Имя', blank=False)
-    lastName = models.CharField(max_length=100, verbose_name='Отчество', blank=True)
     middle_name = models.CharField(max_length=100, verbose_name='Фамилия', blank=False)
+    lastName = models.CharField(max_length=100, verbose_name='Отчество', blank=True)
     dateOfBirth = models.DateField(max_length=100, verbose_name='Дата рождения', blank=False, null=False)
 
     def __str__(self):
